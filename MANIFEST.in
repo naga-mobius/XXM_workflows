@@ -1,0 +1,32 @@
+# Include important files in the package distribution
+
+# Documentation files
+include README.md
+include LICENSE
+include CHANGELOG.md
+
+# Configuration files
+include requirements.txt
+include setup.py
+include pyproject.toml
+
+# Example files
+include example_usage.py
+include inference_example.py
+
+# Package files
+include __init__.py
+include llm_trainer.py
+include llm_inference.py
+
+# Exclude development and build files
+exclude .gitignore
+exclude .git/*
+exclude build/*
+exclude dist/*
+exclude *.egg-info/*
+exclude .pytest_cache/*
+exclude __pycache__/*
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
+recursive-exclude * .DS_Store
