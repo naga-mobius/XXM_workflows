@@ -370,6 +370,55 @@ class LLM:
             logger.error(f"Error pushing to hub: {str(e)}")
             raise
     
+    # def generate_text(
+    #     self,
+    #     prompt: str,
+    #     max_new_tokens: int = 256,
+    #     temperature: float = 0.7,
+    #     do_sample: bool = True,
+    #     top_p: float = 0.9,
+    #     **kwargs
+    # ) -> str:
+    #     """
+    #     Generate text using the fine-tuned model.
+        
+    #     Args:
+    #         prompt: Input prompt
+    #         max_new_tokens: Maximum number of new tokens to generate
+    #         temperature: Sampling temperature
+    #         do_sample: Whether to use sampling
+    #         top_p: Top-p sampling parameter
+    #         **kwargs: Additional generation parameters
+            
+    #     Returns:
+    #         str: Generated text
+    #     """
+    #     if self.model is None or self.tokenizer is None:
+    #         raise ValueError("Model and tokenizer must be loaded first")
+        
+    #     # Enable inference mode
+    #     FastLanguageModel.for_inference(self.model)
+        
+    #     # Tokenize input
+    #     inputs = self.tokenizer(prompt, return_tensors="pt")
+        
+    #     # Generate
+    #     with torch.no_grad():
+    #         outputs = self.model.generate(
+    #             **inputs,
+    #             max_new_tokens=max_new_tokens,
+    #             temperature=temperature,
+    #             do_sample=do_sample,
+    #             top_p=top_p,
+    #             pad_token_id=self.tokenizer.eos_token_id,
+    #             **kwargs
+    #         )
+        
+    #     # Decode and return
+    #     generated_text = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
+    #     return generated_text[len(prompt):]  # Return only the new generated part
+
+
     def generate_text(
         self,
         prompt: str,
@@ -381,27 +430,18 @@ class LLM:
     ) -> str:
         """
         Generate text using the fine-tuned model.
-        
-        Args:
-            prompt: Input prompt
-            max_new_tokens: Maximum number of new tokens to generate
-            temperature: Sampling temperature
-            do_sample: Whether to use sampling
-            top_p: Top-p sampling parameter
-            **kwargs: Additional generation parameters
-            
-        Returns:
-            str: Generated text
         """
         if self.model is None or self.tokenizer is None:
             raise ValueError("Model and tokenizer must be loaded first")
         
         # Enable inference mode
         FastLanguageModel.for_inference(self.model)
-        
-        # Tokenize input
+    
+        # Ensure inputs are on the same device as the model
+        device = self.model.device
         inputs = self.tokenizer(prompt, return_tensors="pt")
-        
+        inputs = {k: v.to(device) for k, v in inputs.items()}
+    
         # Generate
         with torch.no_grad():
             outputs = self.model.generate(
@@ -413,11 +453,11 @@ class LLM:
                 pad_token_id=self.tokenizer.eos_token_id,
                 **kwargs
             )
-        
+    
         # Decode and return
         generated_text = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
         return generated_text[len(prompt):]  # Return only the new generated part
-    
+
     
     def get_model_info(self) -> Dict[str, Any]:
         """
