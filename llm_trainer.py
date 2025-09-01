@@ -241,6 +241,23 @@ class LLM:
             raise ValueError("Model and tokenizer must be loaded first")
         
         # Create training arguments
+        # training_args = TrainingArguments(
+        #     output_dir=output_dir,
+        #     num_train_epochs=num_train_epochs,
+        #     per_device_train_batch_size=per_device_train_batch_size,
+        #     gradient_accumulation_steps=gradient_accumulation_steps,
+        #     warmup_steps=warmup_steps,
+        #     learning_rate=learning_rate,
+        #     fp16=fp16,
+        #     logging_steps=logging_steps,
+        #     save_strategy=save_strategy,
+        #     optim="adamw_8bit",
+        #     weight_decay=0.01,
+        #     lr_scheduler_type="linear",
+        #     seed=3407,
+        #     **kwargs
+        # )
+
         training_args = TrainingArguments(
             output_dir=output_dir,
             num_train_epochs=num_train_epochs,
@@ -248,7 +265,8 @@ class LLM:
             gradient_accumulation_steps=gradient_accumulation_steps,
             warmup_steps=warmup_steps,
             learning_rate=learning_rate,
-            fp16=fp16,
+            fp16=False,          # ❌ disable fp16
+            bf16=True,           # ✅ enable bf16
             logging_steps=logging_steps,
             save_strategy=save_strategy,
             optim="adamw_8bit",
@@ -257,7 +275,7 @@ class LLM:
             seed=3407,
             **kwargs
         )
-        
+
 
         # Create trainer
         self.trainer = SFTTrainer(
