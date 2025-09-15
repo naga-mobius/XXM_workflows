@@ -69,6 +69,7 @@ setup(
         "accelerate>=0.24.0",
         "peft>=0.6.0",
         "trl>=0.7.0",
+        "unsloth[colab-new] @ git+https://github.com/unslothai/unsloth.git",
         "huggingface_hub>=0.17.0",
         "wandb>=0.15.0",
         "bitsandbytes>=0.41.0",
