@@ -55,7 +55,7 @@ class ToolInferenceEngine:
             adapter_path=ADAPTER_PATH,
             max_seq_length=4096,
             load_in_4bit=True,
-            device="auto"
+            device="cuda"
         )
         
         # Load model
@@ -74,7 +74,7 @@ AVAILABLE TOOLS:
 
 FUNCTION CALLING RULES:
 1. When users request actions that can be performed with these tools, respond with properly formatted function calls
-2. Use this EXACT JSON format for function calls:
+2. Strictly Use this EXACT JSON format for function calls:
 
 ```json
 {{
@@ -89,6 +89,27 @@ FUNCTION CALLING RULES:
 3. Always validate required parameters before suggesting function calls
 4. Provide helpful explanations about what each function does
 5. For multi-step workflows, break them down clearly
+
+WHEN TO USE EACH TOOL:
+
+📤 USE upload_csv_file WHEN:
+- User wants to upload a CSV file from their local system
+- User mentions a file path they want to upload
+- User needs to make a local CSV file accessible via CDN/cloud
+- This is typically the FIRST step in any data processing workflow
+- Examples: "Upload my sales.csv file", "Upload the data at /path/to/file.csv"
+
+📥 USE create_ingestion_job WHEN:
+- User wants to process an already uploaded CSV file
+- User has a CDN URL and wants to create a data processing job
+- User mentions creating workflows, jobs, or ingestion processes
+- This is typically the SECOND step, after a file is uploaded
+- User provides destination schemas or database configurations
+- Examples: "Create an ingestion job for this uploaded file", "Process the CSV at this URL"
+
+TYPICAL WORKFLOW:
+1. First: upload_csv_file (local file → CDN URL)
+2. Then: create_ingestion_job (CDN URL → processed data)
 
 TOOL CAPABILITIES:
 - upload_csv_file: Upload CSV files to secure cloud storage and get CDN URLs
