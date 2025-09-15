@@ -11,8 +11,10 @@ import torch
 from typing import Dict, List, Optional, Union, Any
 from transformers import (
     AutoTokenizer, 
+    AutoModelForCausalLM,
     PreTrainedModel,
-    PreTrainedTokenizer
+    PreTrainedTokenizer,
+    BitsAndBytesConfig
 )
 from unsloth import FastLanguageModel
 from peft import PeftModel
@@ -94,14 +96,76 @@ class LLMInference:
         logger.info(f"Loading base model: {self.base_model_path}")
         
         try:
-            # Load base model and tokenizer using Unsloth for faster loading
-            self.model, self.tokenizer = FastLanguageModel.from_pretrained(
-                model_name=self.base_model_path,
-                max_seq_length=self.max_seq_length,
-                dtype=self.dtype,
-                load_in_4bit=self.load_in_4bit,
-                token=self.token
-            )
+            # Configure quantization with proper CPU offload support
+            if self.load_in_4bit and torch.cuda.is_available():
+                # Configure 4-bit quantization with CPU offload capability
+                quantization_config = BitsAndBytesConfig(
+                    load_in_4bit=True,
+                    bnb_4bit_quant_type="nf4",
+                    bnb_4bit_compute_dtype=torch.float16,
+                    bnb_4bit_use_double_quant=True,
+                    llm_int8_enable_fp32_cpu_offload=True  # Enable CPU offload for insufficient GPU memory
+                )
+                
+                device_map = "auto"  # Automatic device mapping
+                
+                # Configure memory limits for better memory management
+                max_memory = {}
+                if torch.cuda.is_available():
+                    # Get available GPU memory and reserve some for overhead
+                    gpu_memory = torch.cuda.get_device_properties(0).total_memory
+                    # Use 90% of available GPU memory to leave room for operations
+                    max_gpu_memory = int(gpu_memory * 0.9 / (1024**3))  # Convert to GB
+                    max_memory = {
+                        f"cuda:{torch.cuda.current_device()}": f"{max_gpu_memory}GiB",
+                        "cpu": "32GiB"  # Allow substantial CPU memory for offloading
+                    }
+                    logger.info(f"Configured memory limits: {max_memory}")
+                
+                logger.info("Using 4-bit quantization with CPU offload support")
+                
+                # Try Unsloth first for faster loading
+                try:
+                    self.model, self.tokenizer = FastLanguageModel.from_pretrained(
+                        model_name=self.base_model_path,
+                        max_seq_length=self.max_seq_length,
+                        dtype=self.dtype,
+                        load_in_4bit=self.load_in_4bit,
+                        token=self.token,
+                        device_map=device_map
+                    )
+                    logger.info("Successfully loaded model using Unsloth")
+                except Exception as unsloth_error:
+                    logger.warning(f"Unsloth loading failed: {unsloth_error}")
+                    logger.info("Falling back to transformers AutoModel with proper quantization config")
+                    
+                    # Fallback to transformers with proper quantization config
+                    self.model = AutoModelForCausalLM.from_pretrained(
+                        self.base_model_path,
+                        quantization_config=quantization_config,
+                        device_map=device_map,
+                        max_memory=max_memory if max_memory else None,
+                        torch_dtype=self.dtype or torch.float16,
+                        token=self.token,
+                        trust_remote_code=True
+                    )
+                    
+                    self.tokenizer = AutoTokenizer.from_pretrained(
+                        self.base_model_path,
+                        token=self.token,
+                        trust_remote_code=True
+                    )
+                    
+            else:
+                # Load without quantization
+                logger.info("Loading model without quantization")
+                self.model, self.tokenizer = FastLanguageModel.from_pretrained(
+                    model_name=self.base_model_path,
+                    max_seq_length=self.max_seq_length,
+                    dtype=self.dtype,
+                    load_in_4bit=False,
+                    token=self.token
+                )
             
             # Load adapter if specified
             if self.adapter_path:
@@ -113,8 +177,13 @@ class LLMInference:
                 )
                 logger.info("Adapter loaded successfully")
             
-            # Set up for inference
-            FastLanguageModel.for_inference(self.model)
+            # Set up for inference - only use FastLanguageModel.for_inference if loaded with Unsloth
+            try:
+                FastLanguageModel.for_inference(self.model)
+                logger.info("Model configured for inference using Unsloth")
+            except Exception as e:
+                logger.info(f"Setting eval mode manually (not using Unsloth): {e}")
+                self.model.eval()  # Fallback to standard eval mode
             
             # Update generation config with tokenizer-specific tokens
             self.generation_config['pad_token_id'] = self.tokenizer.pad_token_id
