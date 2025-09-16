@@ -45,7 +45,7 @@ def upload_csv_file(file_path):
     response = requests.request("POST", url, headers=headers, data=payload, files=files)
     response = response.json()
     cdn_url = response.get('cdnUrl')
-    cdn_url = "https://cdn.gov-cloud.ai"+cdn_url
+    cdn_url = "https://cdn-new.gov-cloud.ai"+cdn_url
     return cdn_url
 
 def create_ingestion_job(file_url: str, destination_schema: str, file_type: str, job_name: str = None):
@@ -118,13 +118,13 @@ TOOL_DESCRIPTIONS = {
         },
         "returns": {
             "type": "string",
-            "description": "The full CDN URL where the uploaded file can be accessed, prefixed with 'https://cdn.gov-cloud.ai'."
+            "description": "The full CDN URL where the uploaded file can be accessed, prefixed with 'https://cdn-new.gov-cloud.ai'."
         },
         "example": {
             "input": {
                 "file_path": "sample.csv"
             },
-            "output": "https://cdn.gov-cloud.ai/_ENC(4+j2JOgE1QQdq6yO427Uztql2TlqlMwKUOg5QJcVQ5XUgB/GP4/J5WLrrqWMDU3q)/bottle/limka/soda/8ecfade9-96ca-4dfd-8c35-2651a0b6b37c_$$_V1_sample.csv"
+            "output": "https://cdn-new.gov-cloud.ai/_ENC(4+j2JOgE1QQdq6yO427Uztql2TlqlMwKUOg5QJcVQ5XUgB/GP4/J5WLrrqWMDU3q)/bottle/limka/soda/8ecfade9-96ca-4dfd-8c35-2651a0b6b37c_$$_V1_sample.csv"
         }
     },
     "create_ingestion_job": {
@@ -160,7 +160,7 @@ TOOL_DESCRIPTIONS = {
         },
         "example": {
             "input": {
-                "file_url": "https://cdn.gov-cloud.ai/_ENC(4+j2JOgE1QQdq6yO427Uztql2TlqlMwKUOg5QJcVQ5XUgB/GP4/J5WLrrqWMDU3q)/bottle/limka/soda/8ecfade9-96ca-4dfd-8c35-2651a0b6b37c_$$_V1_sample.csv",
+                "file_url": "https://cdn-new.gov-cloud.ai/_ENC(4+j2JOgE1QQdq6yO427Uztql2TlqlMwKUOg5QJcVQ5XUgB/GP4/J5WLrrqWMDU3q)/bottle/limka/soda/8ecfade9-96ca-4dfd-8c35-2651a0b6b37c_$$_V1_sample.csv",
                 "destination_schema": "68c41b50f34309622134ee3b",
                 "file_type": "CSV",
                 "job_name": "my_data_ingestion_job"
@@ -328,7 +328,7 @@ if __name__ == "__main__":
     # print(f"File uploaded to: {cdn_url}")
     
     # Example ingestion job creation
-file_url = "https://cdn.gov-cloud.ai/_ENC(4+j2JOgE1QQdq6yO427Uztql2TlqlMwKUOg5QJcVQ5XUgB/GP4/J5WLrrqWMDU3q)/bottle/limka/soda/7e728886-e9a0-4cbb-8fc8-e6ded08430ff_$$_V1_sample.csv"
+file_url = "https://cdn-new.gov-cloud.ai/_ENC(4+j2JOgE1QQdq6yO427Uztql2TlqlMwKUOg5QJcVQ5XUgB/GP4/J5WLrrqWMDU3q)/bottle/limka/soda/7e728886-e9a0-4cbb-8fc8-e6ded08430ff_$$_V1_sample.csv"
 destination_schema = "68c41b50f34309622134ee3b"
 file_type = "CSV"
 

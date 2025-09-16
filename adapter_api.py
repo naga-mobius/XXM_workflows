@@ -52,7 +52,7 @@ from qwen3_tools import (
 #     response = requests.request("POST", url, headers=headers, data=payload, files=files)
 #     response = response.json()
 #     cdn_url = response.get('cdnUrl')
-#     cdn_url = "https://cdn.gov-cloud.ai"+cdn_url
+#     cdn_url = "https://cdn-new.gov-cloud.ai"+cdn_url
 #     return cdn_url
 
     
@@ -207,7 +207,7 @@ Be precise, helpful, and always format function calls correctly."""
                 # Simulate upload
                 logger.info("the tool simulation is happening")
                 file_path = parameters.get("file_path", "")
-                simulated_url = f"https://cdn.gov-cloud.ai/simulated/{os.path.basename(file_path)}"
+                simulated_url = f"https://cdn-new.gov-cloud.ai/simulated/{os.path.basename(file_path)}"
                 return True, simulated_url, None
             else:
                 # Actual upload
