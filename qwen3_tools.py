@@ -113,13 +113,8 @@ TOOL_DESCRIPTIONS = {
                     "type": "string",
                     "description": "The local file system path to the CSV file that needs to be uploaded. Must be a valid path to an existing CSV file."
                 }
-                # "upload_url": {
-                #     "type": "string",
-                #     "description": "The target URL endpoint where the file should be uploaded. Default is 'https://igs.gov-cloud.ai/pi-file-service/v1.0/upload'.",
-                #     "default": "https://igs.gov-cloud.ai/pi-file-service/v1.0/upload"
-                # }
             },
-            "required": ["file_path", "upload_url"]
+            "required": ["file_path"]
         },
         "returns": {
             "type": "string",
@@ -127,7 +122,7 @@ TOOL_DESCRIPTIONS = {
         },
         "example": {
             "input": {
-                "file_path": "/Users/user/data/sample.csv"
+                "file_path": "sample.csv"
             },
             "output": "https://cdn.gov-cloud.ai/_ENC(4+j2JOgE1QQdq6yO427Uztql2TlqlMwKUOg5QJcVQ5XUgB/GP4/J5WLrrqWMDU3q)/bottle/limka/soda/8ecfade9-96ca-4dfd-8c35-2651a0b6b37c_$$_V1_sample.csv"
         }
@@ -335,10 +330,10 @@ if __name__ == "__main__":
     # Example ingestion job creation
 file_url = "https://cdn.gov-cloud.ai/_ENC(4+j2JOgE1QQdq6yO427Uztql2TlqlMwKUOg5QJcVQ5XUgB/GP4/J5WLrrqWMDU3q)/bottle/limka/soda/7e728886-e9a0-4cbb-8fc8-e6ded08430ff_$$_V1_sample.csv"
 destination_schema = "68c41b50f34309622134ee3b"
-    file_type = "CSV"
-    
-    # Uncomment to test ingestion job creation:
-    # ingestion_job_response = create_ingestion_job(file_url, destination_schema, file_type)
-    # print(ingestion_job_response)
-    
-    print("\nTool registry setup complete! Use tool_registry to access tool descriptions and validation.")
+file_type = "CSV"
+
+# Uncomment to test ingestion job creation:
+# ingestion_job_response = create_ingestion_job(file_url, destination_schema, file_type)
+# print(ingestion_job_response)
+
+print("\nTool registry setup complete! Use tool_registry to access tool descriptions and validation.")
