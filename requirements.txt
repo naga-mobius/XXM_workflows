@@ -11,3 +11,5 @@ bitsandbytes>=0.41.0
 xformers>=0.0.22
 pandas>=1.5.0
 numpy>=1.21.0
+fastapi
+uvicorn[standard]
