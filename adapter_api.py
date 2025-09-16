@@ -302,14 +302,15 @@ import uvicorn
 
 app = FastAPI()
 
+engine = ToolInferenceEngine()
+engine.initialize_model()
+
 # Input schema for request body
 class InferenceRequest(BaseModel):
     input: Any  # change to str/dict depending on your needs
 
 # Your function
 def qwen3_fc_adapter_inference(user_input):
-    engine = ToolInferenceEngine()
-    engine.initialize_model()
     upload_result = engine.process_user_request(user_input, simulate=False)
     return upload_result['execution_result']
 
