@@ -139,6 +139,17 @@ class ModelMerger:
             else:
                 raise ValueError(f"Unsupported save_method: {save_method}")
             
+            # Step 4: Update repository visibility if needed
+            if private and save_method in ["merged_16bit", "merged_4bit"]:
+                logger.info("🔒 Setting repository to private...")
+                try:
+                    api = HfApi(token=self.hf_token)
+                    api.update_repo_visibility(repo_id=repo_name, private=private)
+                    logger.info("✅ Repository privacy setting updated")
+                except Exception as e:
+                    logger.warning(f"⚠️ Could not update privacy setting: {str(e)}")
+                    logger.info("💡 You can manually set the repository to private on HuggingFace Hub")
+            
             hub_url = f"https://huggingface.co/{repo_name}"
             logger.info(f"🎉 Successfully uploaded merged model to: {hub_url}")
             
