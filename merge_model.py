@@ -112,9 +112,7 @@ class ModelMerger:
                     repo_name,
                     tokenizer,
                     save_method="merged_16bit",
-                    token=self.hf_token,
-                    private=private,
-                    commit_message=commit_message
+                    token=self.hf_token
                 )
             elif save_method == "merged_4bit":
                 logger.info("💾 Saving merged model in 4-bit precision...")
@@ -122,9 +120,7 @@ class ModelMerger:
                     repo_name,
                     tokenizer,
                     save_method="merged_4bit", 
-                    token=self.hf_token,
-                    private=private,
-                    commit_message=commit_message
+                    token=self.hf_token
                 )
             elif save_method == "lora":
                 logger.info("💾 Saving LoRA adapters only...")
@@ -176,7 +172,7 @@ def main():
             return
     
     # Get repository name for upload
-    default_repo_name = "merged-qwen3-14b-xlam-fc"
+    default_repo_name = "qwen3-14b-xlam-fc"
     repo_name = input(f"📝 Enter repository name (default: {default_repo_name}): ").strip()
     if not repo_name:
         repo_name = default_repo_name
