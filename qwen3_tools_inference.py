@@ -174,7 +174,7 @@ Be precise, helpful, and always format function calls correctly."""
                 if simulate:
                     # Simulate upload
                     file_path = parameters.get("file_path", "")
-                    simulated_url = f"https://cdn.gov-cloud.ai/simulated/{os.path.basename(file_path)}"
+                    simulated_url = f"https://cdn-new.gov-cloud.ai/simulated/{os.path.basename(file_path)}"
                     return True, simulated_url, None
                 else:
                     # Actual upload
@@ -388,7 +388,7 @@ def demo_batch_tool_requests():
     # Sample requests
     test_requests = [
         "Upload the file at '/data/sales_2024.csv' to the cloud storage",
-        "Create an ingestion job for 'https://cdn.gov-cloud.ai/data/customers.csv' with schema 'customer_schema_001' and type 'CSV'",
+        "Create an ingestion job for 'https://cdn-new.gov-cloud.ai/data/customers.csv' with schema 'customer_schema_001' and type 'CSV'",
         "I need to process a CSV file - first upload '/tmp/inventory.csv' then create an ingestion job for it",
         "Help me understand what tools are available for data processing",
         "Upload my file at '/home/user/transactions.csv' with a custom job name 'monthly_transactions'"
